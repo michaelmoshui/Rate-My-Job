@@ -1,0 +1,25 @@
+:root {
+  --bg-primary: rgb(0, 93, 159);
+  --bg-secondary: rgb(242, 250, 255);
+  --bg-third: rgb(210, 210, 210);
+  --bg-fourth: rgb(240, 240, 240);
+  --color-primary: rgb(75, 192, 255);
+  --color-secondary: rgb(0, 121, 207);
+  --text-primary: black;
+  --text-secondary: white;
+  --shadow: rgb(170, 170, 170);
+}
+
+* {
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  margin: 0;
+}
+
+* button {
+  outline: none;
+  background: white;
+  cursor: pointer;
+}

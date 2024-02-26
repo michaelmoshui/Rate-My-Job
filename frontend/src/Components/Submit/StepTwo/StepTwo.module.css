@@ -1,0 +1,63 @@
+.stepTwoWrap {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  outline: none;
+}
+
+.stepTwoComp {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  justify-content: center;
+  margin-top: 180px;
+}
+
+.title {
+  font-size: 25px;
+  font-weight: 600;
+}
+
+.changeState {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  width: 100%;
+  gap: 35px;
+  position: absolute;
+  bottom: 20px;
+}
+
+.changeState button {
+  width: 100%;
+  height: 50px;
+  font-size: 20px;
+  border: none;
+  background: var(--color-primary);
+  color: var(--text-secondary);
+}
+
+.changeState span {
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.changeState .arrows {
+  height: 60px;
+  width: 60px;
+  border-radius: 100%;
+  background: var(--bg-third);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.changeState .arrows:hover {
+  background: rgb(225, 225, 225);
+}
+
+.changeState .arrows:focus {
+  background: rgb(225, 225, 225);
+}

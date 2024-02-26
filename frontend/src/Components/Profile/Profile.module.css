@@ -1,0 +1,33 @@
+.profileWrap {
+  background: var(--bg-primary);
+  height: 100vh;
+  width: 320px;
+  padding: 0 40px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.backIconWrap {
+  margin-top: 20px;
+  height: 50px;
+  width: 50px;
+  border-radius: 100%;
+  background: white;
+  position: relative;
+}
+
+.backIcon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.name {
+  color: var(--text-secondary);
+  font-size: 35px;
+}

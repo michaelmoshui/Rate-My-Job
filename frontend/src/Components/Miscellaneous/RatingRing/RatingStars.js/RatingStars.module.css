@@ -1,0 +1,21 @@
+.ratingWrap {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.clear {
+  font-size: 20px;
+  align-self: flex-end;
+  cursor: pointer;
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.starWrap {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-evenly;
+  cursor: pointer;
+}

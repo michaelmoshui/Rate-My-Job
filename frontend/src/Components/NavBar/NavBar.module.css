@@ -1,0 +1,56 @@
+.navbarWrap {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.navbarItem {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+}
+
+.navbarItem:nth-child(3) {
+  gap: 25px;
+}
+
+.submitButton:nth-of-type(1) {
+  height: 50px;
+  width: 160px;
+  border: 3px solid var(--color-secondary);
+  border-radius: 50px;
+  background: white;
+  font-size: large;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.submitButton:nth-of-type(2) {
+  height: 50px;
+  width: 200px;
+  border: 3px solid var(--color-secondary);
+  border-radius: 50px;
+  background: white;
+  font-size: large;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.submitButton:hover {
+  background: var(--color-secondary);
+  color: white;
+}
+
+.account {
+  width: 60px;
+  height: 60px;
+  background: var(--bg-fourth);
+  border: none;
+  border-radius: 100%;
+  cursor: pointer;
+}
+
+.account:hover {
+  background: #dcdcdc;
+}

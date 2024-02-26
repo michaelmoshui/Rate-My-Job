@@ -1,0 +1,80 @@
+.stepThreeWrap {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  outline: none;
+}
+
+.stepThreeComp {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  justify-content: center;
+}
+
+.stepThreeComp input {
+  outline: none;
+  height: 30px;
+  padding: 0 10px;
+  width: 200px;
+  border: 2px solid var(--bg-primary);
+}
+
+.stepThreeComp input:focus {
+  border: 3px solid var(--color-primary);
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.changeState {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  width: 100%;
+  gap: 35px;
+  position: absolute;
+  bottom: 20px;
+}
+
+.changeState button {
+  width: 100%;
+  height: 50px;
+  font-size: 20px;
+  border: none;
+  background: var(--color-primary);
+  color: var(--text-secondary);
+}
+
+.changeState span {
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.changeState .arrows {
+  height: 60px;
+  width: 60px;
+  border-radius: 100%;
+  background: var(--bg-third);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.changeState .arrows:hover {
+  background: rgb(225, 225, 225);
+}
+
+.errorMessage {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  bottom: 0;
+  left: 0;
+  transform: translateY(105%);
+  color: red;
+}

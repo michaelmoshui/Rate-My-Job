@@ -1,0 +1,72 @@
+.signuiForm {
+  width: 450px;
+  padding: 50px;
+  background: var(--bg-secondary);
+  border-radius: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.signuiTitle {
+  font-size: 40px;
+  text-align: center;
+  font-weight: 800;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--bg-third);
+  width: 100%;
+}
+.signuiForm form {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+}
+
+.inputField {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.inputField input {
+  height: 45px;
+  font-size: 16px;
+  outline: none;
+  border-radius: 20px;
+  padding: 0px 10px;
+  border: 3px solid var(--bg-third);
+}
+
+.inputField input:focus {
+  border-color: var(--color-primary);
+}
+
+.errorMessage {
+  height: 20px;
+  padding: 0 10px;
+  color: red;
+}
+
+.signuiButton {
+  width: 200px;
+  height: 50px;
+  background: var(--color-primary);
+  color: var(--text-secondary);
+  border: none;
+  outline: none;
+  border-radius: 20px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.change {
+  text-decoration: underline;
+  color: rgb(0, 136, 255);
+  cursor: pointer;
+}

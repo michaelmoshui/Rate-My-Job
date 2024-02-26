@@ -1,79 +1,106 @@
-import json
-from django.http import HttpResponse, JsonResponse
-# for development purpose exempt csrf protection
-from django.views.decorators.csrf import csrf_exempt, csrf_protect, ensure_csrf_cookie
-from users.models import User
-from users.helpers import generateRandomName
-from django.contrib.auth import authenticate, login, logout
-from django.middleware.csrf import get_token
-from rest_framework.parsers import JSONParser
-from users.serializers import UserSignInSerializer, UserSignUpSerializer
-from rest_framework.response import Response
+from django.http import JsonResponse
+from users.serializers import UserSignInSerializer, UserSignUpSerializer, GetProfileSerializer
+from rest_framework.views import APIView
+from rest_framework import permissions
+from rest_framework.authentication import SessionAuthentication
+from django.contrib.auth import login, logout
 from rest_framework import status
-from rest_framework.decorators import api_view
+from users.models import User
+from users.permissions import VerificationCodePermission
 
 # login function
-def signin(request):
-    try:
-        data = json.loads(request.body)
-        id, password = data.get("id"), data.get("password")
+class UserSignin(APIView):
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = (SessionAuthentication,)
 
-        # try authenticating through both username and email
-        username_auth = authenticate(username=id, password=password)
-        email_auth = authenticate(email=id, password=password)
+    def post(self, request):
+        try:
+            data = request.data
+            serializer = UserSignInSerializer(data=data)
 
-        # check authentication
-        if username_auth:
-            login(request, username_auth)
-            return HttpResponse(get_token(request), status=200)
-        if email_auth:
-            
-            login(request, email_auth)
-            print(get_token(request))
-            print(get_token(request))
-            print(get_token(request))
-            return HttpResponse(get_token(request), status=200)
-        if not username_auth and not email_auth:
-            return HttpResponse({"message": "User does not exist", "user": None}, status=401)        
-    except:
-        return HttpResponse({"message": "Login error"}, status=500)
+            if serializer.is_valid():
+                user = serializer.signin(data)
+
+                if user:
+                    login(request, user)
+                    return JsonResponse(serializer.data, status=200)
+                else:
+                    return JsonResponse({"message": "User does not exist"}, status=400)
+            else:
+                return JsonResponse(serializer.error_messages, status=500)
+        except:
+            return JsonResponse({"message": "Login error"}, status=500)
+    
     
 # sign up function
-@csrf_exempt
-@api_view(['POST'])
-def signup(request):
-    data = JSONParser().parse(request)
-    serializer = UserSignUpSerializer(data=data)
+class UserSignUp(APIView):
+    permission_classes = (permissions.AllowAny,)
+    
+    def post(self, request):
 
-    if serializer.is_valid():
-        full_name, email, password = serializer["full_name"], serializer["email"], serializer["password"]
+        data = request.data
 
-        if len(User.objects.filter(email__contains=email)) != 0:
-            return JsonResponse({"message": "Email already exists"}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = UserSignUpSerializer(data=data)
+
+        if serializer.is_valid():
+            message, status = serializer.create_user(data)
+            request.session['new_sign_up'] = True
+            request.session['temp_user'] = 
+            return JsonResponse(message, status=status)
         else:
-            # validate email ends with @utoronto.ca
-            domain = email.split("@")[-1]
-            if domain not in ['mail.utoronto.ca', 'utoronto.ca']:
-                return JsonResponse({"message": "Please enter a UofT email"}, status=status.HTTP_400_BAD_REQUEST)
-            
-            # create new username
-            new_username = generateRandomName(full_name)
-            while len(User.objects.filter(username__contains=new_username)) != 0:
-                new_username = generateRandomName(full_name)
-            
-            # save user
-            User.objects.create_user(full_name=full_name, email=email, username=new_username, password=password)
-            return JsonResponse({"message": "Please enter the verification code sent to your email.", "full_name": full_name}, status=status.HTTP_200_OK)
-    else:
-        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse(serializer.error_messages, status=status.HTTP_400_BAD_REQUEST)
+
+# send verification code
+class VerificationCode(APIView):
+    permission_classes = (VerificationCodePermission,)
+
+    def post(self, request):
+        email = request.data['email']
+        return JsonResponse({"message": "Verification Code sent"}, status=status.HTTP_200_OK)
+
+# confirm verification code
+class VCCheck(APIView):
+    permission_classes = (VerificationCodePermission,)
+
+    def post(self, request):
+        login(request, user)
+        request.session['new_sign_up'] = False
+        request.session['temp_user'] = None
+        return JsonResponse({"message": "Successfully sign in!"}, status=status.HTTP_200_OK)
     
 # reset password function
-
+        
 # logout function
-def logout(request):
-    logout(request)
-    return HttpResponse({"message": "Logout success."}, status=200)
+class Signout(APIView):
+    permission_classes = (permissions.AllowAny,)
+    
+    def post(self, request):
+        logout(request)
+        return JsonResponse({"message": "Successfully logged out"}, status=200)
 
 # get profile function
+class GetProfile(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
     
-# edit profile function
+    def post(self, request):
+        # who is making the request
+        request_user = request.user.username
+
+        # who the profile is
+        profile_user = request.data['username']
+
+    
+        if request_user != profile_user:
+            return JsonResponse({"message": "Unauthroized to edit this profile"}, status=status.HTTP_403_FORBIDDEN)
+        
+        # proceed if they are the same
+        try:
+            user = User.objects.get(username=profile_user)
+            serializer = GetProfileSerializer(user)
+            return JsonResponse(serializer.data, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return JsonResponse({"message": "This user does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    
+            
+    

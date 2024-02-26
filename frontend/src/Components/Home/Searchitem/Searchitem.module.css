@@ -1,0 +1,45 @@
+.searchItemWrap {
+  padding: 20px;
+  width: 750px;
+  background: var(--bg-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.title {
+  font-size: 30px;
+  font-weight: 600;
+}
+
+.company {
+  font-size: 20px;
+}
+
+.overview {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.overviewItem {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.overviewItem span {
+  font-size: 20px;
+}
+
+.learnMoreButton {
+  width: 150px;
+  height: 50px;
+  align-self: flex-end;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  background: var(--color-secondary);
+  color: var(--text-secondary);
+}

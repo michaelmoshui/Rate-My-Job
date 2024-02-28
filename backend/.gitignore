@@ -1,3 +1,4 @@
+# for django backend
 *.pyc
 __pycache__
 db.sqlite3

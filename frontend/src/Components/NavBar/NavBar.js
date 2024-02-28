@@ -3,7 +3,11 @@ import styles from "./NavBar.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 
-export default function NavBar({ setShowSubmit, setReviewType }) {
+export default function NavBar({
+  setShowSubmit,
+  setReviewType,
+  setShowProfile,
+}) {
   return (
     <div className={styles.navbarWrap}>
       <div>{/* This is an empty div for space filling */}</div>
@@ -29,7 +33,12 @@ export default function NavBar({ setShowSubmit, setReviewType }) {
         >
           Research Review
         </button>
-        <button className={styles.account}>
+        <button
+          className={styles.account}
+          onClick={() => {
+            setShowProfile((prev) => !prev);
+          }}
+        >
           <FontAwesomeIcon icon={faUser} size="xl" />
         </button>
       </div>

@@ -2,10 +2,18 @@ import styles from "./Profile.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
-export default function Profile() {
+export default function Profile({ showProfile, setShowProfile }) {
+  console.log(showProfile);
   return (
-    <div className={styles.profileWrap}>
-      <div className={styles.backIconWrap}>
+    <div
+      className={`${styles.profileWrap} ${showProfile ? styles.visible : ""}`}
+    >
+      <div
+        className={styles.backIconWrap}
+        onClick={() => {
+          setShowProfile(false);
+        }}
+      >
         <FontAwesomeIcon
           icon={faArrowLeft}
           size="xl"

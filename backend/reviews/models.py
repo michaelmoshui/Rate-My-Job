@@ -1,21 +1,21 @@
 from django.db import models
-from reviews.Review import Review
+from reviews.ReviewModel import Review
 
 # Create your models here.   
 class CoopReview(Review):
     company_ID = models.ForeignKey(
         "Company",
-        on_delete=models.SET_NULL
+        on_delete=models.CASCADE
     )
-    salary = models.DecimalField()
+    salary = models.DecimalField(max_digits = 12, decimal_places = 2)
     
 
 class ResearchReview(Review):
     research_group_ID = models.ForeignKey(
         "ResearchGroup",
-        on_delete=models.SET_NULL
+        on_delete=models.CASCADE
     )
-    funding = models.DecimalField()
+    funding = models.DecimalField(max_digits = 12, decimal_places = 2)
 
 # company and research group tables, not much at the moment, but possibly expand in the future
 

@@ -1,7 +1,7 @@
 import styles from "./StepThree.module.css";
-import RatingStars from "../../Miscellaneous/RatingRing/RatingStars.js/RatingStars";
+import RatingStars from "../../Miscellaneous/RatingStars.js/RatingStars";
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { validNum } from "../helper";
 

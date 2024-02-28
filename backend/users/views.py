@@ -32,7 +32,7 @@ class UserSignin(APIView):
             return JsonResponse({"message": "Login error"}, status=500)
     
     
-# sign up function
+# sign up function not finished
 class UserSignUp(APIView):
     permission_classes = (permissions.AllowAny,)
     
@@ -45,7 +45,7 @@ class UserSignUp(APIView):
         if serializer.is_valid():
             message, status = serializer.create_user(data)
             request.session['new_sign_up'] = True
-            request.session['temp_user'] = 
+            # request.session['temp_user'] = 
             return JsonResponse(message, status=status)
         else:
             return JsonResponse(serializer.error_messages, status=status.HTTP_400_BAD_REQUEST)

@@ -3,7 +3,7 @@ from reviews.ReviewModel import Review
 
 # Create your models here.   
 class CoopReview(Review):
-    company_ID = models.ForeignKey(
+    company = models.ForeignKey(
         "Company",
         on_delete=models.CASCADE
     )
@@ -11,7 +11,7 @@ class CoopReview(Review):
     
 
 class ResearchReview(Review):
-    research_group_ID = models.ForeignKey(
+    research_group = models.ForeignKey(
         "ResearchGroup",
         on_delete=models.CASCADE
     )

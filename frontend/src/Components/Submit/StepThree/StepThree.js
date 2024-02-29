@@ -5,7 +5,7 @@ import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { validNum } from "../helper";
 
-export default function StepThree({ info, setInfo, setStep }) {
+export default function StepThree({ info, setInfo, setStep, reviewType }) {
   const [salary, setSalary] = useState(info.salary);
   const [interview, setInterview] = useState(info.interview);
   const [skill, setSkill] = useState(info.skill);
@@ -57,7 +57,11 @@ export default function StepThree({ info, setInfo, setStep }) {
       }}
     >
       <div className={styles.stepThreeComp}>
-        <div className={styles.title}>Yearly Salary (CAD)</div>
+        <div className={styles.title}>{`${
+          reviewType === "research"
+            ? "Yearly Salary (CAD)"
+            : "Total Funding (CAD)"
+        }`}</div>
         <input
           autoFocus
           value={salary}

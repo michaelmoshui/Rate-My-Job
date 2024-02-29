@@ -18,6 +18,7 @@ export default function StepOne({
   // control state
   setStep,
   setShowSubmit,
+  reviewType,
 }) {
   // missing info?
   const [missing, setMissing] = useState(false);
@@ -190,7 +191,9 @@ export default function StepOne({
         </div>
         <div className={styles.inputField}>
           <input
-            placeholder="Company . . ."
+            placeholder={`${
+              reviewType === "research" ? "Research Group" : "Company"
+            } . . .`}
             name="company"
             value={info.company}
             onChange={handleInputChange}
@@ -238,7 +241,9 @@ export default function StepOne({
         </div>
         <div className={styles.inputField}>
           <input
-            placeholder="Job Title . . ."
+            placeholder={`${
+              reviewType === "research" ? "Research" : "Job"
+            } Title . . .`}
             name="jobTitle"
             value={info.jobTitle}
             onChange={handleInputChange}

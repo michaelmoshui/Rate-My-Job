@@ -25,6 +25,7 @@ export default function Submit({ setShowSubmit, reviewType }) {
     term: ["", ""],
     workNum: "",
     duration: "",
+    reviewType: reviewType,
   });
 
   // submit ref

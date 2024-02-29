@@ -5,7 +5,13 @@ import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 import axios from "axios";
 
-export default function StepFour({ info, setInfo, setStep, setShowSubmit }) {
+export default function StepFour({
+  info,
+  setInfo,
+  setStep,
+  setShowSubmit,
+  reviewType,
+}) {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -36,7 +42,24 @@ export default function StepFour({ info, setInfo, setStep, setShowSubmit }) {
         setError("Please explain your specific ratings.");
         setLoading(false);
       } else {
-        await axios.post(`${process.env.REACT_APP_BACKEND_URL}/signin`, info);
+        await axios.post(`${process.env.REACT_APP_BACKEND_URL}/signin`, {
+          // list out all the fields for clarity
+          location: info.location,
+          company: info.company,
+          jobTitle: info.jobTitle,
+          termTime: parseInt(info.term[0]),
+          termYear: parseInt(info.term[1]),
+          workNum: parseInt(info.workNum),
+          duration: parseInt(info.duration),
+          reviewType: info.reviewType,
+          overall: info.overall.reduce((a, b) => a + b),
+          salary: parseFloat(info.salary),
+          skill: info.skill.reduce((a, b) => a + b),
+          interview: info.interview.reduce((a, b) => a + b),
+          culture: info.culture.reduce((a, b) => a + b),
+          mentorship: info.mentorship.reduce((a, b) => a + b),
+          addition: info.addition,
+        });
         setError(null);
         setLoading(false);
         setShowSubmit(false);

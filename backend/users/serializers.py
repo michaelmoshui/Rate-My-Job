@@ -17,9 +17,9 @@ class UserSignUpSerializer(serializers.ModelSerializer):
             return {"message": "Email already exists"}, status.HTTP_400_BAD_REQUEST
         else:
             # validate email ends with @utoronto.ca
-            domain = email.split("@")[-1]
-            if domain not in ['mail.utoronto.ca', 'utoronto.ca']:
-                return {"message": "Please enter a UofT email"}, status.HTTP_400_BAD_REQUEST
+            # domain = email.split("@")[-1]
+            # if domain not in ['mail.utoronto.ca', 'utoronto.ca']:
+            #     return {"message": "Please enter a UofT email"}, status.HTTP_400_BAD_REQUEST
             
             # create new username
             new_username = generateRandomName(full_name)
@@ -27,8 +27,8 @@ class UserSignUpSerializer(serializers.ModelSerializer):
                 new_username = generateRandomName(full_name)
             
             # save user
-            User.objects.create_user(full_name=full_name, email=email, username=new_username, password=password)
-            return {"message": "Please enter the verification code sent to your email.", "full_name": full_name}, status.HTTP_200_OK
+            user = User.objects.create_user(full_name=full_name, email=email, username=new_username, password=password)
+            return {"message": "Please enter the verification code sent to your email.", "user": user}, status.HTTP_200_OK
 
 class UserSignInSerializer(serializers.Serializer):
 

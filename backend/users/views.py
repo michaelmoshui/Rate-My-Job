@@ -7,6 +7,15 @@ from django.contrib.auth import login, logout
 from rest_framework import status
 from users.models import User
 from users.permissions import VerificationCodePermission
+from users.helpers import sendEmail, generateVC
+
+# get the csrf token with a get request
+class GetCsrf(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, request):
+        return JsonResponse({'message': 'csrf token sent'}, status=status.HTTP_201_CREATED)
+
 
 # login function
 class UserSignin(APIView):
@@ -38,25 +47,47 @@ class UserSignUp(APIView):
     
     def post(self, request):
 
-        data = request.data
+        try:
+            data = request.data
 
-        serializer = UserSignUpSerializer(data=data)
+            serializer = UserSignUpSerializer(data=data)
 
-        if serializer.is_valid():
-            message, status = serializer.create_user(data)
-            request.session['new_sign_up'] = True
-            # request.session['temp_user'] = 
-            return JsonResponse(message, status=status)
-        else:
-            return JsonResponse(serializer.error_messages, status=status.HTTP_400_BAD_REQUEST)
+            if serializer.is_valid():
+                res, status = serializer.create_user(data)
+                request.session['new_sign_up'] = True
+                request.session['temp_user'] = res['user']
+                return JsonResponse({'message': res["message"], 'user': res['user']}, status=201)
+            else:
+                return JsonResponse(serializer.error_messages, status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return JsonResponse({'message': "internal server error."}, status=500)
 
 # send verification code
 class VerificationCode(APIView):
-    permission_classes = (VerificationCodePermission,)
+    permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
-        email = request.data['email']
-        return JsonResponse({"message": "Verification Code sent"}, status=status.HTTP_200_OK)
+        try:
+            # # no temp user, not from sign in
+            # if 'temp_user' not in request.session:
+            #     return JsonResponse({'message': 'You are not authorized to send verification code.'}, status=status.HTTP_403_FORBIDDEN)
+            
+            data = request.data
+
+            # # request user does not match temp user from sign up
+            # if request.session['temp_user'].email != data['email']:
+            #     return JsonResponse({'message': 'You are not authorized to send verification code.'}, status=status.HTTP_403_FORBIDDEN)
+            
+            verification = generateVC()
+            # send the email
+            send_status = sendEmail(data['email'], data['fullName'], verification)
+
+            if send_status:
+                return JsonResponse({"message": "Verification Code sent"}, status=status.HTTP_200_OK)
+            else:
+                return JsonResponse({'message': "Something went wrong, request verification code again."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except:
+            return JsonResponse({'message': "internal server error."}, status=500)
 
 # confirm verification code
 class VCCheck(APIView):

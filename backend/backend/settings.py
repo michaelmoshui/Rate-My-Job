@@ -62,6 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'middlewares.userAuth.UserAuthMiddleware'
 ]
 
 # cors allowed origin
@@ -74,6 +75,14 @@ CORS_ALLOWED_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'backend.urls'
+
+# EMAILS
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv("HOST_EMAIL")
+EMAIL_HOST_PASSWORD = os.getenv("HOST_EMAIL_PASSWORD")
 
 TEMPLATES = [
     {

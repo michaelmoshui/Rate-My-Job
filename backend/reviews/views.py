@@ -7,12 +7,15 @@ from reviews.serializers import ReviewSubmitSerializer
 from reviews.helpers import term_check, get_term
 from users.models import User
 from django.core import serializers
+from django.utils.decorators import method_decorator
+from middlewares.userAuth import UserAuthMiddleware
 
 # submit review function
 class SubmitReview(APIView):
     permission_classes=(permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
+    @method_decorator(UserAuthMiddleware)
     def post(self, request):
         try:
             data = request.data

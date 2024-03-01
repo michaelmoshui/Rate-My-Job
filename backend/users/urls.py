@@ -2,6 +2,7 @@ from django.urls import path
 import users.views as UserViews
 
 urlpatterns = [
+    path('get_csrf', UserViews.GetCsrf.as_view(), name="get_csrf"),
     path('signin', UserViews.UserSignin.as_view(), name="signin"),
     path('signup', UserViews.UserSignUp.as_view(), name="signup"),
     path('signout', UserViews.Signout.as_view(), name="signout"),

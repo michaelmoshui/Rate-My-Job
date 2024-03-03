@@ -32,7 +32,7 @@ class User(AbstractUser):
 # verification code for when user signs up
 class VerificationCode(models.Model):
     code = models.CharField(max_length=6, default=None)
-    user_ID = models.ForeignKey(
+    user = models.ForeignKey(
         "User",
         on_delete=models.CASCADE
     )

@@ -14,7 +14,10 @@ def generateRandomName(name):
 
 # generate verification code
 def generateVC():
-    pass
+    res = ""
+    for i in range(6):
+        res += str(random.randint(0,9))
+    return res
 
 # send emails upon signup
 def sendEmail(email, name, vc):

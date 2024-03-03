@@ -5,17 +5,10 @@ from rest_framework import permissions
 from rest_framework.authentication import SessionAuthentication
 from django.contrib.auth import login, logout
 from rest_framework import status
-from users.models import User
+from users.models import User, VerificationCode
 from users.permissions import VerificationCodePermission
 from users.helpers import sendEmail, generateVC
-
-# get the csrf token with a get request
-class GetCsrf(APIView):
-    permission_classes = (permissions.AllowAny,)
-
-    def get(self, request):
-        return JsonResponse({'message': 'csrf token sent'}, status=status.HTTP_201_CREATED)
-
+from django.core import serializers
 
 # login function
 class UserSignin(APIView):
@@ -31,7 +24,7 @@ class UserSignin(APIView):
                 user = serializer.signin(data)
 
                 if user:
-                    login(request, user)
+                    login(request, user, 'users.LoginBackend.LoginBackend')
                     return JsonResponse(serializer.data, status=200)
                 else:
                     return JsonResponse({"message": "User does not exist"}, status=400)
@@ -53,37 +46,46 @@ class UserSignUp(APIView):
             serializer = UserSignUpSerializer(data=data)
 
             if serializer.is_valid():
-                res, status = serializer.create_user(data)
-                request.session['new_sign_up'] = True
-                request.session['temp_user'] = res['user']
-                return JsonResponse({'message': res["message"], 'user': res['user']}, status=201)
+                res = serializer.create_user(data)
+                if not res['exist']:
+                    request.session['new_sign_up'] = True
+                    request.session['temp_user'] = res['user'].email
+                    print(res['user'].email)
+                    return JsonResponse({'message': res["message"], 'email': res['user'].email}, status=201)
+                else:
+                    return JsonResponse({'message': res['message']}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return JsonResponse(serializer.error_messages, status=status.HTTP_400_BAD_REQUEST)
         except:
             return JsonResponse({'message': "internal server error."}, status=500)
 
 # send verification code
-class VerificationCode(APIView):
-    permission_classes = (permissions.AllowAny,)
+class SendVC(APIView):
+    permission_classes = (VerificationCodePermission,)
 
     def post(self, request):
         try:
-            # # no temp user, not from sign in
-            # if 'temp_user' not in request.session:
-            #     return JsonResponse({'message': 'You are not authorized to send verification code.'}, status=status.HTTP_403_FORBIDDEN)
-            
             data = request.data
 
-            # # request user does not match temp user from sign up
-            # if request.session['temp_user'].email != data['email']:
-            #     return JsonResponse({'message': 'You are not authorized to send verification code.'}, status=status.HTTP_403_FORBIDDEN)
+            # request user does not match temp user from sign up
+            if request.session['temp_user'] != data['email']:
+                return JsonResponse({'message': 'You are not authorized to send verification code.'}, status=status.HTTP_403_FORBIDDEN)
             
+            # verification code
             verification = generateVC()
+            print(verification)
             # send the email
             send_status = sendEmail(data['email'], data['fullName'], verification)
 
             if send_status:
-                return JsonResponse({"message": "Verification Code sent"}, status=status.HTTP_200_OK)
+                # store verification code in database
+                try:
+                    user = User.objects.get(email=request.session['temp_user'])
+                    new_code = VerificationCode(user=user, code=verification)
+                    new_code.save()
+                    return JsonResponse({"message": "Verification Code sent"}, status=status.HTTP_200_OK)
+                except:
+                    return JsonResponse({'message': 'An unexpected error occurred. Please refresh and try again.'}, status=status.HTTP_404_NOT_FOUND)
             else:
                 return JsonResponse({'message': "Something went wrong, request verification code again."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except:
@@ -92,12 +94,34 @@ class VerificationCode(APIView):
 # confirm verification code
 class VCCheck(APIView):
     permission_classes = (VerificationCodePermission,)
+    authentication_classes = (SessionAuthentication,)
 
     def post(self, request):
-        login(request, user)
-        request.session['new_sign_up'] = False
-        request.session['temp_user'] = None
-        return JsonResponse({"message": "Successfully sign in!"}, status=status.HTTP_200_OK)
+        try:
+            data = request.data
+
+            # request user does not match temp user from sign up
+            if request.session['temp_user'] != data['email']:
+                return JsonResponse({'message': 'You are not authorized to verify.'}, status=status.HTTP_403_FORBIDDEN)
+            
+            try:
+                user = User.objects.get(email=request.session['temp_user'])
+
+                code = VerificationCode.objects.filter(user__exact=user).order_by("-time_created").first()
+
+                if code.code == data['code']:            
+                    login(request, user, 'users.LoginBackend.LoginBackend')
+                    request.session['new_sign_up'] = False
+                    request.session['temp_user'] = None
+                    user.verified = True
+                    user.save()
+                    return JsonResponse({"message": "Successfully sign in!", "user": {"name": user.full_name, "email": user.email, "verified": user.verified}}, status=status.HTTP_200_OK)
+                else:
+                    return JsonResponse({"message": "Your input does not match the latest verification code. Please try again.", "user": None}, status=status.HTTP_401_UNAUTHORIZED)
+            except:
+                return JsonResponse({'message': 'An unexpected error occurred. Please refresh and try again.'}, status=status.HTTP_404_NOT_FOUND)
+        except:
+            return JsonResponse({"message": "Internal Server Error."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)        
     
 # reset password function
         

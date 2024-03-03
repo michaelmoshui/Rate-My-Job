@@ -7,7 +7,8 @@ class Review(models.Model):
     time_updated = models.DateField(auto_now=True)
     user = models.ForeignKey(
         User,
-        on_delete=models.CASCADE
+        on_delete=models.SET_NULL,
+        null=True
     )
     
     # background info

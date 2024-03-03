@@ -13,8 +13,10 @@ class UserSignUpSerializer(serializers.ModelSerializer):
 
         email, full_name, password = data['email'], data['full_name'], data['password']
 
-        if len(User.objects.filter(email__contains=email)) != 0:
-            return {"message": "Email already exists"}, status.HTTP_400_BAD_REQUEST
+        existing_user = User.objects.filter(email__exact=email)
+        print(existing_user)
+        if len(existing_user) != 0:
+            return {"message": "Email already exists", "user": None, "exist": True}
         else:
             # validate email ends with @utoronto.ca
             # domain = email.split("@")[-1]
@@ -28,7 +30,7 @@ class UserSignUpSerializer(serializers.ModelSerializer):
             
             # save user
             user = User.objects.create_user(full_name=full_name, email=email, username=new_username, password=password)
-            return {"message": "Please enter the verification code sent to your email.", "user": user}, status.HTTP_200_OK
+            return {"message": "Please enter the verification code sent to your email.", "user": user, "exist": False}
 
 class UserSignInSerializer(serializers.Serializer):
 
